@@ -69,7 +69,7 @@ void DFSTraversal(vector<vector<int>>& matrix, vector<char>& vname) {
 
 int main(){
     int n;
-    cout << "Enter number of vertices: ";
+    cout << "Enter Number of Landmarks: ";
     cin >> n;
     
     vector<vector<int>> matrix(n, vector<int>(n, 0));
@@ -77,7 +77,7 @@ int main(){
     char vn;
     
     for(int i = 0; i < n; i++){
-        cout << "\nEnter name of vertex " << i + 1 << ": ";
+        cout << "\nEnter Name of Landmark " << i + 1 << ": ";
         cin >> vn;
         vname.push_back(vn);
     }
@@ -86,10 +86,10 @@ int main(){
     for(int i = 0; i < matrix.size(); i++){
         for(int j = 0; j < matrix[i].size(); j++){
             char inp;
-            cout << "\nIs there an edge between " << vname[i] << " and " << vname[j] << " (y/n): ";
+            cout << "\nIs there an Path between " << vname[i] << " to " << vname[j] << " (y/n): ";
             cin >> inp;
             if(inp == 'y'){
-                cout << "\nEnter weight of the edge: ";
+                cout << "\nEnter Distance of the Path: ";
                 cin >> weight;
                 matrix[i][j] = weight;
             }
