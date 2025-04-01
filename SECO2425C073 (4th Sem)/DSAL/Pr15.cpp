@@ -2,9 +2,10 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+
 using namespace std;
 
-typedef pair<int, int> pii; // (weight, vertex)
+typedef pair<int, int> pii;
 
 void displayAdjMatrix(vector<vector<int>>& matrix, vector<string>& cityNames) {
     int n = cityNames.size();
@@ -22,31 +23,49 @@ void displayAdjMatrix(vector<vector<int>>& matrix, vector<string>& cityNames) {
 }
 
 void primMST(vector<vector<pii>>& adjList, vector<string>& cityNames, int n) {
-    priority_queue<pii, vector<pii>, greater<pii>> pq; // Min-Heap
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
     vector<bool> visited(n, false);
+    vector<int> parent(n, -1);
+    vector<int> minWeight(n, INT_MAX);
     int minCost = 0;
 
-    pq.push({0, 0}); // Start from node 0
+    pq.push({0, 0});
+    minWeight[0] = 0;
 
-    cout << "\nMinimum Spanning Tree (MST) Edges:\n";
     while (!pq.empty()) {
         auto [weight, u] = pq.top();
         pq.pop();
 
-        if (visited[u]) continue; // Ignore visited nodes
+        if (visited[u]) continue;
 
         visited[u] = true;
         minCost += weight;
-        if (u != 0) // Skip the first node as it has no parent
-            cout << cityNames[u] << " with Weight: " << weight << endl;
 
         for (auto [w, v] : adjList[u]) {
-            if (!visited[v])
+            if (!visited[v] && w < minWeight[v]) {
+                minWeight[v] = w;
                 pq.push({w, v});
+                parent[v] = u;
+            }
         }
     }
 
-    cout << "\nMinimum Cost: " << minCost << endl;
+    bool connected = true;
+    for (bool v : visited)
+        if (!v) connected = false;
+
+    if (!connected) {
+        cout << "\nThe graph is disconnected. MST cannot be formed!\n";
+        return;
+    }
+
+    cout << "\nMinimum Spanning Tree (MST) using Prim's Algorithm:\n";
+    for (int i = 1; i < n; i++) {
+        if (parent[i] != -1)
+            cout << cityNames[parent[i]] << " - " << cityNames[i] << " with Weight: " << minWeight[i] << endl;
+    }
+
+    cout << "\nMinimum Cost using Prim's Algorithm: " << minCost << endl;
 }
 
 int main() {
@@ -59,7 +78,6 @@ int main() {
     vector<vector<int>> adjMatrix(n, vector<int>(n, -1));
     vector<vector<pii>> adjList(n);
 
-    // Input city names
     for (int i = 0; i < n; i++) {
         cout << "Enter name of City " << i + 1 << ": ";
         cin >> cityNames[i];
