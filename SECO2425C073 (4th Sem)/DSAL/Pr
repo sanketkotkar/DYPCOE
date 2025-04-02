@@ -13,26 +13,69 @@ struct Node {
     }
 };
 
-class BST {
+class AVL {
 public:
     Node* root;
     
-    BST() {
+    AVL() {
         root = nullptr;
     }
     
+    int height(Node* node) {
+        if (!node) return 0;
+        return 1 + max(height(node->left), height(node->right));
+    }
+    
+    Node* rotateRight(Node* y) {
+        Node* x = y->left;
+        Node* T2 = x->right;
+        x->right = y;
+        y->left = T2;
+        y->balanceFactor = height(y->left) - height(y->right);
+        x->balanceFactor = height(x->left) - height(x->right);
+        return x;
+    }
+    
+    Node* rotateLeft(Node* x) {
+        Node* y = x->right;
+        Node* T2 = y->left;
+        y->left = x;
+        x->right = T2;
+        x->balanceFactor = height(x->left) - height(x->right);
+        y->balanceFactor = height(y->left) - height(y->right);
+        return y;
+    }
+    
+    Node* rotateLeftRight(Node* node) {
+        node->left = rotateLeft(node->left);
+        return rotateRight(node);
+    }
+    
+    Node* rotateRightLeft(Node* node) {
+        node->right = rotateRight(node->right);
+        return rotateLeft(node);
+    }
+    
     Node* insert(Node* node, int value) {
-        if (!node) {
-            return new Node(value);
-        }
+        if (!node) return new Node(value);
         
-        if (value < node->data) {
+        if (value < node->data)
             node->left = insert(node->left, value);
-        } else {
+        else
             node->right = insert(node->right, value);
-        }
         
         node->balanceFactor = height(node->left) - height(node->right);
+        
+        // Balancing the tree
+        if (node->balanceFactor > 1 && value < node->left->data)  // LL case
+            return rotateRight(node);
+        if (node->balanceFactor < -1 && value > node->right->data) // RR case
+            return rotateLeft(node);
+        if (node->balanceFactor > 1 && value > node->left->data)  // LR case
+            return rotateLeftRight(node);
+        if (node->balanceFactor < -1 && value < node->right->data) // RL case
+            return rotateRightLeft(node);
+        
         return node;
     }
     
@@ -40,17 +83,8 @@ public:
         root = insert(root, value);
     }
     
-    int height(Node* node) {
-        if (!node) {
-            return 0;
-        }
-        return 1 + max(height(node->left), height(node->right));
-    }
-    
     void inorderDisplay(Node* node) {
-        if (!node) {
-            return;
-        }
+        if (!node) return;
         inorderDisplay(node->left);
         cout << node->data << " (BF: " << node->balanceFactor << ")\n";
         inorderDisplay(node->right);
@@ -62,14 +96,11 @@ public:
 };
 
 int main() {
-    BST tree;
-    
+    AVL tree;
     int values[] = {10, 5, 15, 3, 7, 12, 18};
     for (int value : values) {
         tree.insert(value);
     }
-    
     tree.display();
-    
     return 0;
 }
