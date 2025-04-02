@@ -1,0 +1,75 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data, balanceFactor;
+    Node *left, *right;
+    
+    Node(int value) {
+        data = value;
+        balanceFactor = 0;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+class BST {
+public:
+    Node* root;
+    
+    BST() {
+        root = nullptr;
+    }
+    
+    Node* insert(Node* node, int value) {
+        if (!node) {
+            return new Node(value);
+        }
+        
+        if (value < node->data) {
+            node->left = insert(node->left, value);
+        } else {
+            node->right = insert(node->right, value);
+        }
+        
+        node->balanceFactor = height(node->left) - height(node->right);
+        return node;
+    }
+    
+    void insert(int value) {
+        root = insert(root, value);
+    }
+    
+    int height(Node* node) {
+        if (!node) {
+            return 0;
+        }
+        return 1 + max(height(node->left), height(node->right));
+    }
+    
+    void inorderDisplay(Node* node) {
+        if (!node) {
+            return;
+        }
+        inorderDisplay(node->left);
+        cout << node->data << " (BF: " << node->balanceFactor << ")\n";
+        inorderDisplay(node->right);
+    }
+    
+    void display() {
+        inorderDisplay(root);
+    }
+};
+
+int main() {
+    BST tree;
+    
+    int values[] = {10, 5, 15, 3, 7, 12, 18};
+    for (int value : values) {
+        tree.insert(value);
+    }
+    
+    tree.display();
+    
+    return 0;
+}
