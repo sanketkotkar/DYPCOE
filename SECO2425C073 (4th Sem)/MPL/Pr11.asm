@@ -1,4 +1,5 @@
 section .data
+newline db 0xa
 num db 4
 result db 0,0,0,0
 
@@ -33,6 +34,15 @@ skip:
     mov rax,1
     mov rdi,1
     mov rsi,result ; display string i.e. result= 78
+    mov rdx,4
+    syscall
+
+    ; Print newline
+    mov rax,1
+    mov rdi,1
+    mov rsi,newline
+    mov rdx,1
+    syscall
     mov rdx,4
     syscall
 
