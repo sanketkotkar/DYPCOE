@@ -12,8 +12,8 @@ _start:
     mov bl,[num]
     call fact
 
-    mov esi,result ; convert to ascii and display
-    mov cl,4 ; iter1 ax=78 iter2
+    mov esi,result+2 ; convert to ascii and display (skip leading zeros)
+    mov cl,2 ; Only process two significant hex digits ; iter1 ax=78 iter2
 
 up:
     rol ax,4 ; ax=87 ax = 78
