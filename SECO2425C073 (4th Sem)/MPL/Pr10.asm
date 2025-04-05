@@ -1,28 +1,37 @@
-section .data
-msg db 'Enter two digit Number::',0xa
+section .data 
+msg db 'Enter two digit Number: ',0xa,0
+
 msg_len equ $-msg
-res db 10,'Multiplication of elements is::'
+
+res db 0xa,'Multiplication of elements is: ',0xa,0
+
 res_len equ $-res
-choice db 'Enter your Choice:',0xa
-db '1.Successive Addition',0xa
-db '2.Add and Shift method',0xa
-db '3.Exit',0xa
+
+choice db 0xa,'Enter your Choice:',0xa
+       db '1. Successive Addition',0xa
+       db '2. Add and Shift method',0xa
+       db '3. Exit',0xa,0
+
 choice_len equ $-choice
 
 section .bss
+
 num resb 03
 num1 resb 01
 result resb 04
 cho resb 2
 
 section .text
+
 global _start
 
 _start:
+
 xor rax,rax
 xor rbx,rbx
 xor rcx,rcx
 xor rdx,rdx
+
 mov byte[result],0
 mov byte[num],0
 mov byte[num1],0
@@ -52,11 +61,13 @@ b: call Add_shift
    jmp _start
 
 exit:
+
 mov rax,60
 mov rdi,0
 syscall
 
 convert: ;; ASCII to Hex conversion
+
 xor rbx,rbx
 xor rcx,rcx
 xor rax,rax
@@ -76,6 +87,7 @@ loop up1
 ret
 
 display: ;; Hex to ASCII conversion
+
 mov rcx,4
 mov rdi,result
 dup1:
@@ -90,63 +102,29 @@ p3: add al,30h
 p4: mov [rdi],al
 inc rdi
 loop dup1
+
 mov rax,1
 mov rdi,1
 mov rsi,result
 mov rdx,4
 syscall
+
+mov rax,1
+mov rdi,1
+mov rsi,0xa
+mov rdx,1
+syscall
+
 ret
 
 Succe_addition:
-mov rax,1
-mov rdi,1
-mov rsi,msg ;print for num1
-mov rdx,msg_len
-syscall
-mov rax,0
-mov rdi,0
-mov rsi,num ;Read num 1
-mov rdx,3
-syscall
-call convert ;convert to hex from ascii
-mov [num1],bl
 
-mov rax,1
-mov rdi,1
-mov rsi,msg
-mov rdx,msg_len ;msg for 2nd number
-syscall
-mov rax,0
-mov rdi,0 ;Read 2nd number
-mov rsi,num
-mov rdx,3
-syscall
-call convert ;convert 2nd number to hex
-
-xor rcx,rcx
-xor rax,rax
-mov rax,[num1]
-repet:
-add rcx,rax
-dec bl
-jnz repet
-
-mov [result],rcx
-mov rax,1
-mov rdi,1
-mov rsi,res
-mov rdx,res_len
-syscall
-mov rbx,[result]
-call display
-ret
-
-Add_shift:
 mov rax,1
 mov rdi,1
 mov rsi,msg
 mov rdx,msg_len
 syscall
+
 mov rax,0
 mov rdi,0
 mov rsi,num
@@ -160,6 +138,56 @@ mov rdi,1
 mov rsi,msg
 mov rdx,msg_len
 syscall
+
+mov rax,0
+mov rdi,0
+mov rsi,num
+mov rdx,3
+syscall
+call convert
+
+xor rcx,rcx
+xor rax,rax
+mov rax,[num1]
+repet:
+add rcx,rax
+dec bl
+jnz repet
+
+mov [result],rcx
+
+mov rax,1
+mov rdi,1
+mov rsi,res
+mov rdx,res_len
+syscall
+
+mov rbx,[result]
+call display
+ret
+
+Add_shift:
+
+mov rax,1
+mov rdi,1
+mov rsi,msg
+mov rdx,msg_len
+syscall
+
+mov rax,0
+mov rdi,0
+mov rsi,num
+mov rdx,3
+syscall
+call convert
+mov [num1],bl
+
+mov rax,1
+mov rdi,1
+mov rsi,msg
+mov rdx,msg_len
+syscall
+
 mov rax,0
 mov rdi,0
 mov rsi,num
@@ -172,6 +200,7 @@ xor rbx,rbx
 xor rcx,rcx
 xor rdx,rdx
 xor rax,rax
+
 mov dl,08
 mov al,[num1]
 mov bl,[num]
@@ -186,6 +215,7 @@ dec dl
 jnz p11
 
 mov [result],rcx
+
 mov rax,1
 mov rdi,1
 mov rsi,res
